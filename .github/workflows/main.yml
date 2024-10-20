@@ -17,9 +17,9 @@ jobs:
       - name: Install dependencies
         run: bundle install
       - name: Build pack
-        run: bundle exec rake
+        run: bundle exec rake all
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: Output
-          path: out
+          path: out/*.zip
