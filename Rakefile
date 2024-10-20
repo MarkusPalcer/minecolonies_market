@@ -52,9 +52,7 @@ def replace!(data, search, replace)
 
   case data
   when CraftBook::NBT::EnumerableTag
-    data.each do |item|
-      replace! item, search, replace
-    end
+    data.each { |item| replace! item, search, replace }
   when CraftBook::NBT::StringTag
     replace! data.value, search, replace
   when String
@@ -67,6 +65,8 @@ def replace!(data, search, replace)
       data.gsub! replace, search
       data.gsub! '!BLAH!', replace
     end
+  else
+    # Ignore unknown tags
   end
 end
 
@@ -80,7 +80,13 @@ def set_string_tags(data, name, value)
     return unless data.name == name
 
     data.value = value
+  else
+    # Ignore unknown tags
   end
+end
+
+task :clean do
+  rm_rf 'out', verbose: false
 end
 
 blueprints = Rake::FileList['src/**/*.blueprint']
@@ -158,8 +164,6 @@ task :compress do
   end
 end
 
-task default: %i[clean metadata compile thumbnails compress]
+task default: %i[clean metadata compile thumbnails]
 
-task :clean do
-  rm_rf 'out', verbose: false
-end
+task all: %i[default compress]
