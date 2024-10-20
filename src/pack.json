@@ -1,0 +1,13 @@
+{
+    "version": 1,
+    "pack-format": 1,
+    "desc": "All buildings are 6x6 (or 6x13) marketstalls",
+    "authors": [
+        "MasterOfVDL"
+    ],
+    "mods": [
+        "structurize"
+    ],
+    "name": "Marketplace",
+    "icon": ""
+}

@@ -1,0 +1,47 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+indent_size = 2
+indent_style = space
+insert_final_newline = true
+max_line_length = 120
+tab_width = 2
+ij_continuation_indent_size = 8
+ij_formatter_off_tag = @formatter:off
+ij_formatter_on_tag = @formatter:on
+ij_formatter_tags_enabled = true
+ij_smart_tabs = false
+ij_visual_guides = 
+ij_wrap_on_typing = false
+
+[{*.gemspec,*.jbuilder,*.rake,*.rb,*.rbi,*.rbw,*.ru,*.thor,.simplecov,capfile,gemfile,guardfile,isolate,rakefile,steepfile,vagrantfile}]
+ij_ruby_align_group_field_declarations = false
+ij_ruby_align_multiline_parameters = true
+ij_ruby_blank_lines_around_class = 1
+ij_ruby_blank_lines_around_method = 1
+ij_ruby_chain_calls_alignment = 2
+ij_ruby_convert_brace_block_by_enter = true
+ij_ruby_empty_declarations_style = 1
+ij_ruby_force_newlines_around_visibility_mods = true
+ij_ruby_indent_private_methods = false
+ij_ruby_indent_protected_methods = false
+ij_ruby_indent_public_methods = false
+ij_ruby_indent_visibility_modifiers = true
+ij_ruby_indent_when_cases = false
+ij_ruby_keep_blank_lines_in_code = 1
+ij_ruby_keep_blank_lines_in_declarations = 1
+ij_ruby_keep_line_breaks = true
+ij_ruby_parentheses_around_method_arguments = true
+ij_ruby_spaces_around_assignment_operators = true
+ij_ruby_spaces_around_hashrocket = true
+ij_ruby_spaces_around_other_operators = true
+ij_ruby_spaces_around_pow_operators = true
+ij_ruby_spaces_around_range_operators = false
+ij_ruby_spaces_around_relational_operators = true
+ij_ruby_spaces_within_array_initializer_braces = true
+ij_ruby_spaces_within_array_literals = false
+ij_ruby_spaces_within_braces = true
+ij_ruby_spaces_within_pipes = false
+ij_ruby_use_external_formatter = false
