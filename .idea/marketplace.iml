@@ -39,6 +39,7 @@
           <RakeTaskImpl description="" fullCommand="compress" id="compress" />
           <RakeTaskImpl description="" fullCommand="default" id="default" />
           <RakeTaskImpl description="" fullCommand="metadata" id="metadata" />
+          <RakeTaskImpl description="" fullCommand="thumbnails" id="thumbnails" />
         </subtasks>
       </RakeTaskImpl>
     </option>
