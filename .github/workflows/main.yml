@@ -16,10 +16,10 @@ jobs:
           ruby-version: 2.7.0
       - name: Install dependencies
         run: bundle install
-      - name: Run tests
+      - name: Build pack
         run: bundle exec rake
-      - name: Upload dotnet test results
+      - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: Compiled Pack
-          path: out/*.zip
+          name: Output
+          path: out
