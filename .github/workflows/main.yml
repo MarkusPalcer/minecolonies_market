@@ -16,6 +16,8 @@ jobs:
           ruby-version: 2.7.0
       - name: Install dependencies
         run: bundle install
+      - name: Test source schematics
+        run: bundle exec rake test
       - name: Build pack
         run: bundle exec rake all
       - name: Upload artifacts

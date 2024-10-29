@@ -3,6 +3,7 @@ require 'craftbook/nbt'
 require 'yaml'
 require 'pathname'
 require 'parallel'
+require 'minitest/test_task'
 
 woods = {
   'Oak' => 'oak',
@@ -167,3 +168,10 @@ end
 task default: %i[clean metadata thumbnails compile]
 
 task all: %i[default compress]
+
+Minitest::TestTask.create(:test) do |t|
+  t.libs << "test"
+  t.libs << "lib"
+  t.warning = false
+  t.test_globs = ["test/**/*.rb"]
+end
