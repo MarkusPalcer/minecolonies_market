@@ -149,9 +149,9 @@ task compile: [:metadata] do
 end
 
 task :thumbnails do
-  mkdir_p 'out/pack'
+  mkdir_p 'out/pack', verbose: false
   Dir.chdir('src') do
-    sh('cp --parents ./**/*.png ../out/pack/')
+    sh('cp --parents ./**/*.png ../out/pack/', verbose: false)
   end
 end
 
@@ -164,6 +164,6 @@ task :compress do
   end
 end
 
-task default: %i[clean metadata compile thumbnails]
+task default: %i[clean metadata thumbnails compile]
 
 task all: %i[default compress]
