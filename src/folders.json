@@ -2,6 +2,7 @@
   "minecolonies:stonesmeltery": "craftsmanship/masonry",
   "minecolonies:blacksmith": "craftsmanship/metallurgy",
   "minecolonies:deliveryman": "craftsmanship/storage",
+  "minecolonies:baker": "craftsmanship/luxury",
   "minecolonies:hospital": "fundamentals",
   "minecolonies:builder": "fundamentals",
   "minecolonies:guardtower": "military"
