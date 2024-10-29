@@ -37,6 +37,13 @@ You will need a Linux installation with the following tools installed
 
 - Run `bundle install` to install the required Gems
 
+## Importing huts to the correct folders
+
+- Create a folder called `import`
+- Put your blueprints there
+- Run `rake import` \
+  **NOTE:** If you want to overwrite existing huts you need to run `rake import FORCE=1`
+
 ## Sanity-Testing your schematics
 
 - Run `rake test` to run some sanity checks against your schematics.
@@ -51,5 +58,5 @@ The following things will be checked:
 
 ## Building
 
-- Run `rake` or `rake default` to build all variants of the stalls and create the ZIP-Archive.
+- Run `rake all` to build all variants of the stalls and create the ZIP-Archive.
   If creation of the ZIP-Archive fails, you will still find the files in `out/pack` and can copy or zip them yourself.
