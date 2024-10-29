@@ -37,6 +37,18 @@ You will need a Linux installation with the following tools installed
 
 - Run `bundle install` to install the required Gems
 
+## Sanity-Testing your schematics
+
+- Run `rake test` to run some sanity checks against your schematics.
+
+The following things will be checked:
+- The filename of the schematic must end with a number
+- Only the numbers 1-5 are allowed
+- The numbers must be consecutive starting with 1 \
+  But the highest number may be any in between 1 and 5 inclusive
+- The same hut may only appear once in the `src` folder structure
+- The dimensions of all 5 scans must be the same
+
 ## Building
 
 - Run `rake` or `rake default` to build all variants of the stalls and create the ZIP-Archive.
