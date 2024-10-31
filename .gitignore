@@ -3,3 +3,4 @@ import
 
 *:Zone.Identifier
 Gemfile.lock
+.rake_tasks~

@@ -200,6 +200,8 @@ task :import do
     target_file = File.join "src", folder, (File.basename file)
     raise "#{file}: already exists, use FORCE=1 to force overwriting of existing files" if File.exist?(target_file) && !ENV["FORCE"]
 
+    mkdir_p File.dirname(target_file), verbose: false
+
     moves[file] = target_file
   end
 
