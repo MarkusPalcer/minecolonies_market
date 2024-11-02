@@ -6,5 +6,6 @@
   "minecolonies:hospital": "fundamentals",
   "minecolonies:builder": "fundamentals",
   "minecolonies:guardtower": "military",
-  "minecolonies:shepherd": "agriculture/husbandry"
+  "minecolonies:shepherd": "agriculture/husbandry",
+  "minecolonies:graveyard": "mystic"
 }
