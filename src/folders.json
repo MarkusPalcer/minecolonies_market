@@ -7,5 +7,6 @@
   "minecolonies:builder": "fundamentals",
   "minecolonies:guardtower": "military",
   "minecolonies:shepherd": "agriculture/husbandry",
-  "minecolonies:graveyard": "mystic"
+  "minecolonies:graveyard": "mystic",
+  "minecolonies:university": "education"
 }
