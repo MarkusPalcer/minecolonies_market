@@ -188,7 +188,7 @@ namespace :tools do
       raise "#{file}: no tile_entites tag found" if tile_entities.nil?
   
       building = tile_entities.find { |tile_entity| tile_entity.find { |property| property.name == "id" && property.value == "minecolonies:colonybuilding" }}
-      raise "#{file}: hut block found (no tile entity with id == 'minecolonies:colonybuilding')" if building.nil?
+      raise "#{file}: no hut block found (no tile entity with id == 'minecolonies:colonybuilding')" if building.nil?
   
       building_type = building.find {|property| property.name == "type" }
       raise "#{file}: hut block without type (no property 'type' in tile entity)" if building_type.nil?
