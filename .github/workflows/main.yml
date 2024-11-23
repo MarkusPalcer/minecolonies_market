@@ -19,7 +19,7 @@ jobs:
       - name: Test source schematics
         run: bundle exec rake test
       - name: Build pack
-        run: bundle exec rake all
+        run: bundle exec rake default
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:

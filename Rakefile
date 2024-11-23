@@ -5,6 +5,8 @@ require 'pathname'
 require 'parallel'
 require 'minitest/test_task'
 require 'fileutils'
+require 'erubis'
+require 'time'
 
 woods = {
   'Oak' => 'oak',
@@ -91,33 +93,54 @@ task :clean do
   rm_rf 'out', verbose: false
 end
 
-blueprints = Rake::FileList['src/**/*.blueprint']
+def gather_needed_mods()
+  mods = []
 
-
-
-task :metadata do
-  pack_metadata = JSON.parse File.read('src/pack.json')
-
-  blueprints.each do |file|
+  Rake::FileList['src/**/*.blueprint'].each do |file|
     data = CraftBook::NBT.read_file file
     data.each do |tag|
       next if tag.name != 'required_mods'
 
       tag.each do |entry|
-        pack_metadata['mods'] << entry.value
+        mods << entry.value
       end
     end
   end
 
-  pack_metadata['mods'].uniq!
-
-  mkdir_p 'out/pack', verbose: false
-  File.write('out/pack/pack.json', JSON.dump(pack_metadata))
+  mods.uniq
 end
 
-task compile: [:metadata] do
-  generated_items = blueprints.map { |f| Pathname.new(f) }.product(colors.to_a, woods.to_a)
-  metadata = JSON.parse File.read 'out/pack/pack.json'
+def metadata
+  metadata = JSON.parse File.read('src/mod_metadata.json').sub("\uFEFF", '')
+
+  # Calculated values
+  metadata['version'] = get_version
+  metadata['mods'] = gather_needed_mods
+  metadata['build_time'] = Time.now.utc.iso8601
+
+  # Fallbacks
+  metadata['displayName'] = metadata['name'] unless metadata.key? 'displayName'
+  metadata['name'] = metadata['displayName'] unless metadata.key? 'name'
+  metadata['modLogo'] = metadata['icon'] unless metadata.key? 'modLogo'
+  metadata['credits'] = '-' unless metadata.key? 'credits'
+
+  # Fill metadata for dependencies: defaults and compiled version-range
+  metadata.fetch('dependencies', {}).each_value do |dep|
+    dep['mandatory'] = true unless dep.key? 'mandatory'
+    dep['ordering'] = "NONE" unless dep.key? 'ordering'
+    dep['side'] = "BOTH" unless dep.key? 'side'
+
+    version_range = (dep.key?('minVersion') ? "[#{dep['minVersion']}" : '(')
+    version_range << ','
+    version_range << (dep.key?('maxVersion') ? "#{dep['maxVersion']}]" : ')')
+    dep['versionRange'] = version_range
+  end
+
+  metadata
+end
+
+task :compile do
+  generated_items = Rake::FileList['src/**/*.blueprint'].map { |f| Pathname.new(f) }.product(colors.to_a, woods.to_a)
 
   Parallel.each(generated_items, progress: 'Generating') do |item|
     file, (color_name, color), (wood_name, wood) = item
@@ -152,8 +175,7 @@ task :thumbnails do
   end
 end
 
-task :compress do
-  metadata = JSON.parse File.read 'out/pack/pack.json'
+task zip: :compile_templates do
   out_file = "#{metadata['name']}.zip"
 
   Dir.chdir('out/pack') do
@@ -161,69 +183,93 @@ task :compress do
   end
 end
 
-def get_version() 
-  version = ENV["VERSION"]
-  raise "VERSION not given" unless version
-  version = version[1..-1] if version.start_with? "v"
-  version = version.to_i
-  raise "VERSION needs to be an integer > 0" unless version > 0
-  version
+task :compile_templates do
+  puts 'Compiling templates'
+  FileList['templates/**/*.erb'].each do |template|
+    relative_path = Pathname.new(template).relative_path_from('templates').sub '.erb', ''
+    puts "  #{relative_path}"
+    eruby = Erubis::Eruby.new(File.read(template))
+    mkdir_p "out/#{relative_path.dirname}", verbose: false
+    File.write "out/#{relative_path}", eruby.evaluate(metadata)
+  end
 end
 
-task :prepare_release do 
+task jar: :compile_templates do
+  out_file = "out/#{metadata['name']}-v#{metadata['version']}.jar"
+  package_folder = "blueprints/#{metadata['name'].gsub(/[^\w\.]/, '_')}/#{metadata['displayName'].gsub(/[^\w\.]/, '_')}/"
+
+  puts "Packing #{out_file}"
+
+  rm out_file, verbose: false if File.exist? out_file
+  Zip::File.open(out_file, create: true) do |zip_file|
+    Dir['out/pack/**/*'].each do |file|
+      target = file.sub('out/pack/', package_folder)
+      puts "  #{file} -> #{target}"
+      zip_file.add target, file
+    end
+
+    Dir['out/jar/**/*'].each do |file|
+      target = file.sub('out/jar/', '')
+      puts "  #{file} -> #{target}"
+      zip_file.add target, file
+    end
+  end
+end
+
+task compress: %i[zip jar]
+
+def get_version()
+  version = ENV.fetch('VERSION', "0")
+  version = version[1..] if version.start_with? 'v'
+  version.to_i
+end
+
+task :check_version do
   # Ensure that the version number is given and a number
+  raise 'VERSION not given or not an integer > 0' unless get_version > 0
+
   puts "Building version #{get_version}"
 end
 
-task :patch_version do 
-  pack_metadata = JSON.parse File.read 'out/pack/pack.json'
-  pack_metadata["version"] = get_version
-  File.write('out/pack/pack.json', JSON.dump(pack_metadata))
-end
-
-task default: %i[clean metadata thumbnails compile]
-
-task release: %i[prepare_release default patch_version compress]
-
-task all: %i[default compress]
+task default: %i[clean compile_templates thumbnails compile compress]
 
 Minitest::TestTask.create(:test) do |t|
-  t.libs << "test"
-  t.libs << "lib"
+  t.libs << 'test'
+  t.libs << 'lib'
   t.warning = false
-  t.test_globs = ["test/**/*.rb"]
+  t.test_globs = ['test/**/*.rb']
 end
 
 namespace :tools do
   desc "Imports schematics from the 'import' folder, putting them into the correct folders by hut type automatically"
-  task :import do 
+  task :import do
     folders = JSON.parse File.read 'src/folders.json'
-  
+
     moves = {}
-  
-    Dir["import/**/*.blueprint"].each do |file|
+
+    Dir['import/**/*.blueprint'].each do |file|
       data = CraftBook::NBT.read_file file
-  
-      tile_entities = data.find { |x| x.name == "tile_entities" }
+
+      tile_entities = data.find { |x| x.name == 'tile_entities' }
       raise "#{file}: no tile_entites tag found" if tile_entities.nil?
-  
-      building = tile_entities.find { |tile_entity| tile_entity.find { |property| property.name == "id" && property.value == "minecolonies:colonybuilding" }}
+
+      building = tile_entities.find { |tile_entity| tile_entity.find { |property| property.name == 'id' && property.value == 'minecolonies:colonybuilding' }}
       raise "#{file}: no hut block found (no tile entity with id == 'minecolonies:colonybuilding')" if building.nil?
-  
-      building_type = building.find {|property| property.name == "type" }
+
+      building_type = building.find {|property| property.name == 'type' }
       raise "#{file}: hut block without type (no property 'type' in tile entity)" if building_type.nil?
-  
+
       folder = folders[building_type.value]
       raise "#{file}: unknown building type '#{building_type.value}'; add it to src/folders.json, so I know where to import to" if folder.nil?
-  
-      target_file = File.join "src", folder, (File.basename file)
-      raise "#{file}: already exists, use FORCE=1 to force overwriting of existing files" if File.exist?(target_file) && !ENV["FORCE"]
-  
+
+      target_file = File.join 'src', folder, (File.basename file)
+      raise "#{file}: already exists, use FORCE=1 to force overwriting of existing files" if File.exist?(target_file) && !ENV['FORCE']
+
       mkdir_p File.dirname(target_file), verbose: false
-  
+
       moves[file] = target_file
     end
-  
+
     moves.each_pair do |src, tgt|
       FileUtils.mv src, tgt
     end
@@ -236,17 +282,17 @@ namespace :tools do
     puts YAML.dump(data)
   end
 
-  desc "Replaces strings within a schematic file"
-  task :replace do 
-    raise "no search string given with SEARCH" unless ENV["SEARCH"]
-    raise "no replacement given with REPLACE" unless ENV["REPLACE"]
-    raise "no input file given with INPUT" unless ENV["INPUT"]
-    raise "no output file given with OUTPUT" unless ENV["OUTPUT"]
+  desc 'Replaces strings within a schematic file'
+  task :replace do
+    raise 'no search string given with SEARCH' unless ENV['SEARCH']
+    raise 'no replacement given with REPLACE' unless ENV['REPLACE']
+    raise 'no input file given with INPUT' unless ENV['INPUT']
+    raise 'no output file given with OUTPUT' unless ENV['OUTPUT']
 
-    data = CraftBook::NBT.read_file ENV["INPUT"]
+    data = CraftBook::NBT.read_file ENV['INPUT']
 
-    replace! data, ENV["SEARCH"], ENV["REPLACE"]
+    replace! data, ENV['SEARCH'], ENV['REPLACE']
 
-    CraftBook::NBT.write_file ENV["OUTPUT"], data, level: :optimal
+    CraftBook::NBT.write_file ENV['OUTPUT'], data, level: :optimal
   end
 end

@@ -1,0 +1,29 @@
+modLoader="lowcodefml"
+loaderVersion="<%=@dependencies["forge"]["versionRange"]%>"
+license="<%=@license%>"
+<%if defined? @issueTracker%>
+issueTrackerURL="<%=@issueTrackerUrl%>"
+<% end %>
+[[mods]]
+modId="<%=@name%>"
+version="<%=@version%>"
+displayName="<%=@displayName%>"
+<%if defined? @updateURL%>
+updateJSONURL="<%=@updateURL%>"
+<%end%>
+displayURL="<%=@projectUrl%>"
+logoFile="<%=@modLogo%>"
+credits="<%=@credits%>"
+authors="<%=@authors.join(",")%>"
+displayTest="IGNORE_SERVER_VERSION"
+description='''
+<%=@description%>
+'''
+<% @dependencies.each do |id, dependency| %>
+[[dependencies.<%=@name%>]]
+    modId="<%=id%>"
+    mandatory=<%=dependency["mandatory"]%>
+    versionRange="<%=dependency["versionRange"]%>"
+    ordering="<%=dependency["ordering"]%>"
+    side="<%=dependency["side"]%>"
+<% end %>

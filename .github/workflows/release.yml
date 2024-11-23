@@ -17,10 +17,12 @@ jobs:
           ruby-version: 2.7.0
       - name: Install dependencies
         run: bundle install
+      - name: Check if version from tag is legal
+        run: bundle exec rake check_version VERSION=${{  github.ref_name }}
       - name: Test source schematics
         run: bundle exec rake test
       - name: Build pack
-        run: bundle exec rake release VERSION=${{  github.ref_name }}
+        run: bundle exec rake default VERSION=${{  github.ref_name }}
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
