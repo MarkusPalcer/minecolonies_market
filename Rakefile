@@ -161,7 +161,29 @@ task :compress do
   end
 end
 
+def get_version() 
+  version = ENV["VERSION"]
+  raise "VERSION not given" unless version
+  version = version[1..-1] if version.start_with? "v"
+  version = version.to_i
+  raise "VERSION needs to be an integer > 0" unless version > 0
+  version
+end
+
+task :prepare_release do 
+  # Ensure that the version number is given and a number
+  puts "Building version #{get_version}"
+end
+
+task :patch_version do 
+  pack_metadata = JSON.parse File.read 'out/pack/pack.json'
+  pack_metadata["version"] = get_version
+  File.write('out/pack/pack.json', JSON.dump(pack_metadata))
+end
+
 task default: %i[clean metadata thumbnails compile]
+
+task release: %i[prepare_release default patch_version compress]
 
 task all: %i[default compress]
 
@@ -171,8 +193,6 @@ Minitest::TestTask.create(:test) do |t|
   t.warning = false
   t.test_globs = ["test/**/*.rb"]
 end
-
-
 
 namespace :tools do
   desc "Imports schematics from the 'import' folder, putting them into the correct folders by hut type automatically"

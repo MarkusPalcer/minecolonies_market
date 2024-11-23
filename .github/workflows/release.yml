@@ -1,0 +1,28 @@
+name: release
+
+on:
+  push:
+    tags: 
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install ruby
+        uses: ruby/setup-ruby@ec02537da5712d66d4d50a0f33b7eb52773b5ed1
+        with:
+          ruby-version: 2.7.0
+      - name: Install dependencies
+        run: bundle install
+      - name: Test source schematics
+        run: bundle exec rake test
+      - name: Build pack
+        run: bundle exec rake release VERSION=${{  github.ref_name }}
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: Output
+          path: out/*.zip
