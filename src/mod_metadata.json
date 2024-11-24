@@ -1,8 +1,7 @@
 ﻿{
-  "name": "minecolonies_market",
+  "name": "marketcolony",
   "displayName": "Market",
   "description": "All buildings are 6x6, 6x13 or 13x13 market stalls",
-  "authorsDisplayString": "MasterOfVDL",
   "authors": [
     "MasterOfVDL",
     "AureliusFox"
