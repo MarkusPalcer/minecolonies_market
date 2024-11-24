@@ -35,6 +35,11 @@
     <option name="myRootTask">
       <RakeTaskImpl id="rake">
         <subtasks>
+          <RakeTaskImpl description="Checks whether the version is set correctly for a release" fullCommand="check_version" id="check_version" />
+          <RakeTaskImpl description="Creates all wood and color variants of the schematics" fullCommand="compile" id="compile" />
+          <RakeTaskImpl description="Creates files from templates" fullCommand="compile_templates" id="compile_templates" />
+          <RakeTaskImpl description="Builds and packages everything" fullCommand="default" id="default" />
+          <RakeTaskImpl description="Packages the style pack as minecraft mod" fullCommand="jar" id="jar" />
           <RakeTaskImpl description="Run the test suite" fullCommand="test" id="test" />
           <RakeTaskImpl id="test">
             <subtasks>
@@ -51,19 +56,9 @@
               <RakeTaskImpl description="Replaces strings within a schematic file" fullCommand="tools:replace" id="replace" />
             </subtasks>
           </RakeTaskImpl>
-          <RakeTaskImpl description="" fullCommand="all" id="all" />
+          <RakeTaskImpl description="Packages the style-pack as zipfile" fullCommand="zip" id="zip" />
           <RakeTaskImpl description="" fullCommand="clean" id="clean" />
-          <RakeTaskImpl description="" fullCommand="compile" id="compile" />
-          <RakeTaskImpl description="" fullCommand="compress" id="compress" />
-          <RakeTaskImpl description="" fullCommand="default" id="default" />
-          <RakeTaskImpl description="" fullCommand="jar" id="jar" />
-          <RakeTaskImpl description="" fullCommand="jar_metadata" id="jar_metadata" />
-          <RakeTaskImpl description="" fullCommand="metadata" id="metadata" />
-          <RakeTaskImpl description="" fullCommand="patch_version" id="patch_version" />
-          <RakeTaskImpl description="" fullCommand="prepare_release" id="prepare_release" />
-          <RakeTaskImpl description="" fullCommand="release" id="release" />
-          <RakeTaskImpl description="" fullCommand="thumbnails" id="thumbnails" />
-          <RakeTaskImpl description="" fullCommand="zip" id="zip" />
+          <RakeTaskImpl description="" fullCommand="package" id="package" />
         </subtasks>
       </RakeTaskImpl>
     </option>
