@@ -29,7 +29,6 @@
     <orderEntry type="library" scope="PROVIDED" name="ruby-progressbar (v1.13.0, WSL) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rufo (v0.17.1, WSL) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="unicode-display_width (v2.6.0, WSL) [gem]" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="zip (v2.0.2, WSL) [gem]" level="application" />
   </component>
   <component name="RakeTasksCache-v2">
     <option name="myRootTask">

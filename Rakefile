@@ -1,4 +1,3 @@
-require 'zip'
 require 'craftbook/nbt'
 require 'yaml'
 require 'pathname'

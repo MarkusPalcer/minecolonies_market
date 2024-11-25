@@ -1,4 +1,6 @@
-﻿desc "Packages the style pack as minecraft mod"
+﻿require 'zip'
+
+desc "Packages the style pack as minecraft mod"
 task jar: :compile_templates do
   out_file = "out/#{metadata['name']}-v#{metadata['version']}.jar"
   package_folder = "blueprints/#{metadata['name'].gsub(/[^\w\.]/, '_')}/#{metadata['displayName'].gsub(/[^\w\.]/, '_')}/"
