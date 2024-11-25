@@ -20,8 +20,13 @@ jobs:
         run: bundle exec rake test
       - name: Build pack
         run: bundle exec rake default
-      - name: Upload artifacts
+      - name: Upload Zip
         uses: actions/upload-artifact@v4
         with:
-          name: Output
+          name: ZIP
           path: out/*.zip
+      - name: Upload JAR
+        uses: actions/upload-artifact@v4
+        with:
+          name: JAR
+          path: out/*.jar
